@@ -2,6 +2,7 @@ import collections
 import os
 import time
 
+from tqdm import tqdm
 from chinese_calendar import is_workday
 from joblib import Parallel, delayed;
 import traceback
@@ -16,6 +17,69 @@ from tools import *
 import cloudpickle
 
 from 分析用户活跃时间数据 import get_active_data
+
+
+def del_inviter_id(data):
+    """
+    从结果中删除inviter_id字段
+    """
+    result = []
+    for item in data:
+        new_item = {
+            "triple_id": item["triple_id"],
+            "candidate_voter_list": item["candidate_voter_list"]
+        }
+        result.append(new_item)
+    return result
+
+
+def getValueFrom2Dict(dict_obj, outer_key, inner_key):
+    """
+    从嵌套字典中获取值，如果键不存在则返回-1
+    """
+    if outer_key in dict_obj and inner_key in dict_obj[outer_key]:
+        return dict_obj[outer_key][inner_key]
+    return -1
+
+
+def statistics(data, desc=""):
+    """
+    统计推荐结果的信息
+    """
+    total = len(data)
+    less_than_5 = 0
+    empty = 0
+    
+    for item in data:
+        if len(item["candidate_voter_list"]) < 5:
+            less_than_5 += 1
+            if len(item["candidate_voter_list"]) == 0:
+                empty += 1
+    
+    result = {
+        "desc": desc,
+        "total": total,
+        "less_than_5": less_than_5,
+        "empty": empty,
+        "less_than_5_rate": less_than_5 / total,
+        "empty_rate": empty / total
+    }
+    
+    print(f"统计结果 - {desc}:")
+    print(f"总数: {total}")
+    print(f"不足5人数量: {less_than_5}, 占比: {less_than_5/total:.2%}")
+    print(f"空结果数量: {empty}, 占比: {empty/total:.2%}")
+    
+    return result
+
+
+def makeStatistics(statisticList, savaPath):
+    """
+    将统计结果写入文件
+    """
+    with open(savaPath + "statistics.json", "wb") as f:
+        f.write(orjson.dumps(statisticList))
+    print(f"统计结果已保存到 {savaPath}statistics.json")
 
 
 def task(i, testdatas, users, dataLF, dataItemLF, itemsinfo, netrelation, sharerank):
@@ -107,45 +171,7 @@ def task(i, testdatas, users, dataLF, dataItemLF, itemsinfo, netrelation, sharer
                     r *= sharerank[id1][fid]
                 else:
                     r *= 0.0000001
-                    # 受邀请者的该时间段相应概率
-                #     ?????????????????????????????????包含不存在
-                # NowDatetime = datetime.strptime(testdata['timestamp'], '%Y-%m-%d %H:%M:%S')
-                # date = NowDatetime.date()
-                # if fid in userPList.keys():
-                #     hours = NowDatetime.hour
-                #     minutes = NowDatetime.minute
-                #     seconds = NowDatetime.second
-                #     min = hours*60+minutes
-                #     mins = min+seconds/60
-                #     tr = 1
-                #     if is_workday(date):
-                #         if "pdfW" in userPList[fid].keys():
-                #             if userPList[fid]['pdfW']!=None:
-                #                 tr = getMultiplier(Alist[0], userPList[fid]['pdfW'], mins)
-                #             else:
-                #                 tr = 1
-                #         else:
-                #             tr = 1
-                #     else:
-                #         if "pdfH" in userPList[fid].keys():
-                #             if userPList[fid]['pdfH']!=None:
-                #                 tr = getMultiplier(Alist[1], userPList[fid]['pdfH'], mins)
-                #             else:
-                #                 tr = 1
-                #         else:
-                #             tr = 1
-                #     r *= tr
-                # else:
-                #     if is_workday(date):
-                #         tr = 1
-                #     else:
-                #         tr = 1
-                #     r *= tr
-
                 # 将评分（r）添加到 SortedDict scor 中
-                # if -r not in scor:
-                #     scor[-r] = []
-                # scor[-r].append(fid)
                 if id1 not in userSimilarityMatrix:
                     userSimilarityMatrix[id1] = {}
                 userSimilarityMatrix[id1][fid] = r
@@ -1164,4 +1190,4 @@ def main(verification=False, percentage=0.15, savaPath="./output/result/", Hyper
 
 
 if __name__ == "__main__":
-    main(savaPath="./output/r2result/")
+    main(savaPath="./output/r2result/", MaxThreading=4)  # 将线程数限制为4
