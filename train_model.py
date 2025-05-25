@@ -99,7 +99,7 @@ def read_json_to_df(file_path, chunk_size=None, desc_override=None):
             yield pd.DataFrame(data)
 
 print("读取核心训练数据...")
-train_data_chunks = list(read_json_to_df('data/train/item_share_train_info.json', chunk_size=200000, desc_override="Reading train_info"))
+train_data_chunks = list(read_json_to_df('data/item_share_train_info.json', chunk_size=200000, desc_override="Reading train_info"))
 if not train_data_chunks or all(df.empty for df in train_data_chunks):
     print("错误: train_data 未能加载或所有块均为空。")
     train_data = pd.DataFrame()
@@ -110,7 +110,7 @@ if train_data.empty:
 
 print("读取用户信息...")
 # 由于 read_json_to_df 总是返回生成器，我们需要list()它
-user_info_chunks = list(read_json_to_df('data/train/user_info.json', desc_override="Reading user_info"))
+user_info_chunks = list(read_json_to_df('data/user_info.json', desc_override="Reading user_info"))
 if not user_info_chunks or user_info_chunks[0].empty: # 期望非分块只产生一个块
     print(f"错误: user_info未能成功加载为DataFrame或为空。请检查 data/train/user_info.json 文件。")
     user_info = pd.DataFrame() # 创建空df以避免后续None错误，但可能导致其他问题
@@ -131,7 +131,7 @@ if 'user_id' not in user_info.columns:
     exit()
 
 print("读取物品信息...")
-item_info_chunks = list(read_json_to_df('data/train/item_info.json', chunk_size=100000, desc_override="Reading item_info"))
+item_info_chunks = list(read_json_to_df('data/item_info.json', chunk_size=100000, desc_override="Reading item_info"))
 if not item_info_chunks or all(df.empty for df in item_info_chunks):
     print("警告: item_info 未能加载或所有块均为空。将使用空DataFrame。")
     item_info = pd.DataFrame()

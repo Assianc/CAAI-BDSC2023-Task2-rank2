@@ -25,8 +25,8 @@ jobs:
 
     - name: Run main
       run: |
-        python test.py
-#        python main.py
+        python train_model.py
+        python run_solution_fast.py
 
     - name: commit
       run: |
