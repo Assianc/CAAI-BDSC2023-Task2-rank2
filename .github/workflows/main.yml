@@ -25,6 +25,8 @@ jobs:
 
     - name: Run main
       run: |
+#        解压data/item_share_train_info.json.zip
+        unzip data/item_share_train_info.json.zip -d data
         python train_model.py
         python run_solution_fast.py
 
