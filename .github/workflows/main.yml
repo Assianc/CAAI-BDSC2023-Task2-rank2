@@ -26,6 +26,8 @@ jobs:
     - name: Run main
       run: |
         unzip data/item_share_train_info.json.zip -d data
+        python train_model.py
+        python run_solution_fast.py
         python mrr.py
 
     - name: commit

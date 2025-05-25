@@ -402,10 +402,10 @@ print("开始训练 LightGBM 模型...")
 lgb_params = {
     'objective': 'binary',
     'metric': 'auc',
-    'learning_rate': 0.05,
+    'learning_rate': 0.1,
     'n_estimators': 1000, # 增加 n_estimators，配合 early_stopping
-    'max_depth': 7,      # 可以适当调整
-    'num_leaves': 40,    # 增加 num_leaves
+    'max_depth': 6,      # 可以适当调整
+    'num_leaves': 32,    # 增加 num_leaves
     'subsample': 0.8,
     'colsample_bytree': 0.8,
     'random_state': 42,
