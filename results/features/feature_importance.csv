@@ -1,0 +1,12 @@
+feature,importance
+voter_voted_count,282
+inviter_invite_count,193
+inviter_out_degree,139
+inviter_voted_count,121
+voter_in_degree,53
+voter_invite_count,41
+inviter_in_degree,30
+user_interaction_freq,29
+inviter_item_freq,19
+voter_out_degree,13
+item_popularity,10
