@@ -60,7 +60,7 @@ def calculate_metrics(test_data, predictions):
 
 
 # 读取训练集和预测结果  
-with open('data/train/item_share_final_train_info.json', 'r', encoding='utf-8') as f:
+with open('data/item_share_train_info_B.json', 'r', encoding='utf-8') as f:
     test_data = json.load(f)
 # 添加triple_id字段
 for idx, x in enumerate(test_data):
