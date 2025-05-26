@@ -450,7 +450,7 @@ log_message("开始训练 LightGBM 模型...")
 
 # 1. 网格搜索参数范围（适当缩小）
 param_grid = {
-    'learning_rate': [0.05, 0.1, 0.15, 0.2, 0.25, 0.3],
+    'learning_rate': [0.05, 0.1, 0.15],
     'max_depth': [2, 3, 4],
     'num_leaves': [26, 31, 33],
     'subsample': [0.7, 0.8, 0.85],
